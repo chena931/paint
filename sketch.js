@@ -11,11 +11,15 @@ var brushPicker;
 var brushType;
 
 var pumpkin;
+var flower;
+var dabs;
 
 
 
 function preload(){
     pumpkin = loadImage("images/pumpkin.png");
+    flower = loadImage("images/flower.png");
+    dabs = loadImage("images/dabs.png");
     imageMode(CENTER);
 }
 
@@ -38,12 +42,21 @@ function setup() {
     saveButton = select('.saveButton');
     saveButton.mouseClicked(saveFunction);
 
+    //Clear button
+    clearButton = select('.clearButton');
+    clearButton.mouseClicked(clearFunction);
+
     //set up the brush type
     brushPicker = createSelect();
     brushPicker.parent("brushType")
     brushPicker.option('paint brush');
     brushPicker.option('spray can');
-    brushPicker.option('image');
+    brushPicker.option('marks');
+    brushPicker.option('random lines');
+    brushPicker.option('dabs');
+    brushPicker.option('pumpkin');
+    brushPicker.option('flower');
+    brushPicker.option('eraser');
     brushPicker.changed(changeBrush);
     brushType = brushPicker.value();
 }
@@ -55,8 +68,18 @@ function draw() {
             sprayCan();
         } else if(brushType == "paint brush"){
             standardStroke(); 
-        } else if(brushType == "image"){
+        } else if(brushType == "random lines"){
+            linesdrawing();
+        } else if(brushType == "pumpkin"){
             drawImage(); 
+        } else if(brushType == "flower"){
+            drawImage2();
+        } else if(brushType == "marks"){
+            tinymarks();
+        } else if(brushType == "eraser"){
+            eraseMarks();
+        } else if(brushType == "dabs"){
+            paintDabs();
         }
         
     } else {
@@ -107,6 +130,34 @@ function drawImage(){
     image(pumpkin,mouseX,mouseY, slider.value(), slider.value());
 }
 
+function eraseMarks(){
+    strokeWeight(slider.value());
+    stroke("#FFFFFF");
+    line(pmouseX, pmouseY, mouseX, mouseY);
+}
+
+function drawImage2(){
+    image(flower,mouseX+random(0,10),mouseY+random(0,10), slider.value(), slider.value());
+}
+
+function tinymarks(){
+    strokeWeight(1);
+    stroke("#"+ colorPicker.value());
+    line(mouseX-slider.value(),mouseY-slider.value(),mouseX+slider.value(),mouseY+slider.value());
+}
+
+function linesdrawing(){
+    for(var x = 0; x < 10; x ++){
+      stroke("#" + colorPicker.value());
+      strokeWeight(slider.value());
+      line(mouseX+ x, mouseY*random(0,50), mouseX + x*100, mouseY*random(0,50));
+    }
+}
+
+function paintDabs(){
+    image(dabs,mouseX+random(0,20),mouseY+random(0,20),slider.value()*10,slider.value()*10);
+}
+
 //--------------------------
 // Event Listeners
 //--------------------------
@@ -118,4 +169,10 @@ function changeBrush(){
 
 function saveFunction() {
     save(drawingCanvas, "myDrawing.jpg");
+}
+
+function clearFunction(){
+    clear(drawingCanvas);
+    background("white");
+
 }
